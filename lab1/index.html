@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+    <title>GeoJSON Drawer (Point + LineString) – Continuous Points</title>
+
+    <!-- ArcGIS JS API -->
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.33/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.33/"></script>
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app" class="container">
+      <div id="viewDiv"></div>
+
+      <div class="panel">
+        <div class="row">
+          <label
+            >Min zoom <input id="minZoom" type="number" step="0.1" value="10"
+          /></label>
+          <label
+            >Max zoom <input id="maxZoom" type="number" step="0.1" value="20"
+          /></label>
+          <label
+            >Start <input id="startZoom" type="number" step="0.1" value="29"
+          /></label>
+          <button class="btn" id="applyZoom">Apply</button>
+        </div>
+        <h3>GeoJSON (Point + LineString)</h3>
+
+        <div class="row">
+          <input type="checkbox" id="clickMode" />
+          <label for="clickMode"
+            >Quick point mode (click map to drop points continuously)</label
+          >
+        </div>
+
+        <div class="toolbar">
+          <button
+            class="btn"
+            id="exportBtn"
+            title="Export current graphics to GeoJSON"
+          >
+            Export to JSON
+          </button>
+          <button class="btn" id="copyBtn">Copy</button>
+          <button class="btn" id="downloadBtn">Download .geojson</button>
+          <button
+            class="btn primary"
+            id="loadBtn"
+            title="Load the JSON below back into the map"
+          >
+            Load into map
+          </button>
+          <button class="btn danger" id="clearBtn">Clear map</button>
+        </div>
+
+        <label class="hint">Paste/inspect GeoJSON here</label>
+        <textarea id="jsonBox">
+{ "type":"FeatureCollection","features":[] }</textarea
+        >
+
+        <div class="hint">
+          Use the <b>Sketch</b> toolbar on the map. With 4.33+, the
+          <b>Point</b> tool stays active (<i>continuous</i>) so you can drop
+          multiple points without re-clicking. If you can’t upgrade, the
+          fallback re-activates the point tool automatically after each
+          placement.
+        </div>
+      </div>
+    </div>
+
+    <!-- App script (after ArcGIS script) -->
+    <script src="./app.js"></script>
+  </body>
+</html>
