@@ -21,10 +21,12 @@ require([
   const layer = new GraphicsLayer();
   const map = new Map({ basemap: "topo-vector", layers: [layer] });
 
+  // Fixed like teacher
   const view = new MapView({
     container: "viewDiv",
     map,
-    center: [106.63, 10.82],
+    center: [106.80196068432218, 10.870525057480787],
+    zoom: 16,
     constraints: { snapToZoom: false },
   });
 
@@ -39,7 +41,7 @@ require([
   });
   view.ui.add(sketch, "top-left");
 
-  // UI refs
+  // UI refs (zoom inputs removed)
   const jsonBox = document.getElementById("jsonBox");
   const exportBtn = document.getElementById("exportBtn");
   const loadBtn = document.getElementById("loadBtn");
@@ -47,32 +49,6 @@ require([
   const copyBtn = document.getElementById("copyBtn");
   const downloadBtn = document.getElementById("downloadBtn");
   const clickMode = document.getElementById("clickMode");
-  const minZoomInput = document.getElementById("minZoom");
-  const maxZoomInput = document.getElementById("maxZoom");
-  const startZoomInput = document.getElementById("startZoom");
-  const applyZoomBtn = document.getElementById("applyZoom");
-  function applyZoomConstraints() {
-    const minZ = Number(minZoomInput.value);
-    const maxZ = Number(maxZoomInput.value);
-    if (Number.isNaN(minZ) || Number.isNaN(maxZ) || minZ > maxZ) return;
-    let startZ = Number(startZoomInput.value);
-    if (Number.isNaN(startZ)) startZ = (minZ + maxZ) / 2;
-    if (startZ < minZ) startZ = minZ;
-    if (startZ > maxZ) startZ = maxZ;
-    view.constraints = Object.assign({}, view.constraints, {
-      minZoom: minZ,
-      maxZoom: maxZ,
-    });
-    view.zoom = startZ;
-  }
-
-  applyZoomBtn.addEventListener("click", applyZoomConstraints);
-  [minZoomInput, maxZoomInput, startZoomInput].forEach((el) => {
-    el.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") applyZoomConstraints();
-    });
-  });
-  applyZoomConstraints();
 
   const pretty = (obj) => JSON.stringify(obj, null, 2);
 
