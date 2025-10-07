@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Ho Chi Minh City</title>
+    <style>
+      html, body, #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.33/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.33/"></script>
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/Graphic",
+        "esri/layers/GraphicsLayer"
+      ], function (Map, MapView, Graphic, GraphicsLayer) {
+        var map = new Map({
+          basemap: "topo-vector"
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [106.80196068432218, 10.870525057480787],
+          zoom: 16,
+          highlightOptions: {
+            color: "blue"
+          }
+        });
+
+        function createGraphic(data) {
+          let geometry;
+          if (data.type === "polygon") {
+            geometry = {
+              type: "polygon",
+              rings: data.rings
+            };
+          } else if (data.type === "polyline") {
+            geometry = {
+              type: "polyline",
+              paths: data.paths
+            };
+          } else if (data.type === "point") {
+            geometry = {
+              type: "point",
+              longitude: data.longitude,
+              latitude: data.latitude
+            };
+          }
+          return new Graphic({
+            geometry: geometry,
+            symbol: data.symbol,
+            attributes: data,
+            popupTemplate: data.popupTemplate
+          });
+        }
+
+        var graphicsLayer = new GraphicsLayer();
+        map.add(graphicsLayer);
+
+        // Chỉ dùng q8_jsondata (theo file quan_8.js)
+        // polygon
+        q8_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+
+        // line
+        q8_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+
+        // point
+        q8_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <script src="./quan_8.js"></script>
+  </body>
+</html>
