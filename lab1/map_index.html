@@ -2,27 +2,35 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
     <title>Ho Chi Minh City</title>
     <style>
-      html, body, #viewDiv {
+      html,
+      body,
+      #viewDiv {
         padding: 0;
         margin: 0;
         height: 100%;
         width: 100%;
       }
     </style>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.33/esri/themes/light/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.33/esri/themes/light/main.css"
+    />
     <script src="https://js.arcgis.com/4.33/"></script>
     <script>
       require([
         "esri/Map",
         "esri/views/MapView",
         "esri/Graphic",
-        "esri/layers/GraphicsLayer"
+        "esri/layers/GraphicsLayer",
       ], function (Map, MapView, Graphic, GraphicsLayer) {
         var map = new Map({
-          basemap: "topo-vector"
+          basemap: "topo-vector",
         });
 
         var view = new MapView({
@@ -31,8 +39,8 @@
           center: [106.80196068432218, 10.870525057480787],
           zoom: 16,
           highlightOptions: {
-            color: "blue"
-          }
+            color: "blue",
+          },
         });
 
         function createGraphic(data) {
@@ -40,25 +48,25 @@
           if (data.type === "polygon") {
             geometry = {
               type: "polygon",
-              rings: data.rings
+              rings: data.rings,
             };
           } else if (data.type === "polyline") {
             geometry = {
               type: "polyline",
-              paths: data.paths
+              paths: data.paths,
             };
           } else if (data.type === "point") {
             geometry = {
               type: "point",
               longitude: data.longitude,
-              latitude: data.latitude
+              latitude: data.latitude,
             };
           }
           return new Graphic({
             geometry: geometry,
             symbol: data.symbol,
             attributes: data,
-            popupTemplate: data.popupTemplate
+            popupTemplate: data.popupTemplate,
           });
         }
 
@@ -70,9 +78,135 @@
         q8_jsondata.polygons.forEach(function (data) {
           graphicsLayer.add(createGraphic(data));
         });
+        thuduc_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q3_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q10_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q11_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        PN_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        BT_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q1_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        cangio_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        nhabe_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        quan7_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        binhchanh_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        binhtan_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q4_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q5_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q6_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        TP_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        TB_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        GV_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        cuchi_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        hocmon_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q12_jsondata.polygons.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
 
         // line
         q8_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        thuduc_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q3_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q10_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q11_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        PN_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        BT_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q1_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        cangio_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        nhabe_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        quan7_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        binhchanh_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        binhtan_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q4_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q5_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q6_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        TP_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        TB_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        GV_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        cuchi_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        hocmon_jsondata.lines.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q12_jsondata.lines.forEach(function (data) {
           graphicsLayer.add(createGraphic(data));
         });
 
@@ -80,11 +214,95 @@
         q8_jsondata.points.forEach(function (data) {
           graphicsLayer.add(createGraphic(data));
         });
+        thuduc_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q3_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q10_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q11_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        PN_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        BT_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q1_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        cangio_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        nhabe_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        quan7_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        binhchanh_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        binhtan_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q4_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q5_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q6_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        TP_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        TB_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        GV_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        cuchi_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        hocmon_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
+        q12_jsondata.points.forEach(function (data) {
+          graphicsLayer.add(createGraphic(data));
+        });
       });
     </script>
   </head>
   <body>
     <div id="viewDiv"></div>
-    <script src="./quan_8.js"></script>
+    <script src="./location_data/quan_8.js"></script>
+    <script src="./location_data/thuduc.js"></script>
+    <script src="./location_data/quan_3.js"></script>
+    <script src="./location_data/quan_10.js"></script>
+    <script src="./location_data/quan_11.js"></script>
+    <script src="./location_data/PN.js"></script>
+    <script src="./location_data/BT.js"></script>
+    <script src="./location_data/Q1.js"></script>
+    <script src="./location_data/CanGio.js"></script>
+    <script src="./location_data/NhaBe.js"></script>
+    <script src="./location_data/Q7.js"></script>
+    <script src="./location_data/BinhChanh.js"></script>
+    <script src="./location_data/BinhTan.js"></script>
+    <script src="./location_data/Q4.js"></script>
+    <script src="./location_data/Q5.js"></script>
+    <script src="./location_data/Q6.js"></script>
+    <script src="./location_data/TP.js"></script>
+    <script src="./location_data/TB.js"></script>
+    <script src="./location_data/GV.js"></script>
+    <script src="./location_data/CuChi.js"></script>
+    <script src="./location_data/HocMon.js"></script>
+    <script src="./location_data/Quan12.js"></script>
   </body>
 </html>
