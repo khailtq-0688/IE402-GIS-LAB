@@ -1,5 +1,16 @@
-# README - lab1
+# NHÓM 2- IE402
+Dưới đây là danh sách các thành viên đã thực hiện dự án này:
 
+| STT | Mã Số Sinh Viên | Họ và Tên |
+| :---: | :---: | :--- |
+| 1 | 22520205 | Cao Thành Đạt |
+| 2 | 222520296 | Đặng Đông Đức Dương |
+| 3 | 222520309 | Phạm Hải Dương |
+| 4 | 222520315 | Lê Đức Anh Duy |
+| 5 | 222520546 | Lê Đặng Hoàng Huy |
+| 6 | 222520587 | Vũ Quang Huy |
+| 7 | 222520603 | Lê Trần Quang Khải |
+| 8 | 222520732 | An Nhất Lâm |
 ## 1. Cấu trúc Project
 
 ```
