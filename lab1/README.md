@@ -1,0 +1,51 @@
+# README - lab1
+
+## 1. Cấu trúc Project
+
+```
+lab1/
+├── map_index.html
+├── icons/
+│   └── ... (các icon địa điểm: trường học, bệnh viện, công viên, ...)
+├── location_data/
+│   └── ... (dữ liệu vị trí các quận/huyện dưới dạng file JS)
+├── resourse/
+│   ├── get-location.html
+│   ├── graphic-json.html
+│   ├── graphics.html
+│   └── starter-map.html
+├── tool_get_location_from_arcgis/
+│   ├── app.js
+│   ├── index.html
+│   └── styles.css
+```
+
+## 2. Hướng dẫn chạy project
+
+- Để chạy project, mở file map_index.html bằng trình duyệt web.
+- Đảm bảo các file và thư mục liên quan đều nằm đúng vị trí như cấu trúc trên.
+
+## 3. Giải thích công dụng các folder
+
+- **icons/**  
+  Chứa các hình ảnh icon đại diện cho các loại địa điểm (trường học, bệnh viện, công viên, ...). Dùng để hiển thị trên bản đồ.
+
+- **location_data/**  
+  Chứa dữ liệu vị trí các quận/huyện dưới dạng file JavaScript. Mỗi file lưu thông tin toạ độ, tên, và các thuộc tính liên quan của từng khu vực.
+
+- **resourse/**  
+  Chứa các file ví dụ, demo về cách sử dụng ArcGIS JS API:
+  - `get-location.html`: Demo lấy tọa độ điểm bằng cách click trên bản đồ.
+  - `graphic-json.html`: Demo hiển thị dữ liệu graphic từ JSON.
+  - `graphics.html`: Demo tạo và hiển thị các graphic (point, polyline, polygon).
+  - `starter-map.html`: Demo khởi tạo bản đồ cơ bản.
+
+- **tool_get_location_from_arcgis/**  
+  Công cụ lấy tọa độ điểm trên base map bằng cách click hoặc kéo thả.  
+  - `index.html`: Giao diện chính của tool.
+  - `app.js`: Xử lý logic lấy tọa độ, xuất dữ liệu.
+  - `styles.css`: Định dạng giao diện tool.
+
+## 4. Liên hệ & đóng góp
+
+Nếu có thắc mắc hoặc muốn đóng góp, vui lòng liên hệ qua email hoặc tạo issue trên repository.
