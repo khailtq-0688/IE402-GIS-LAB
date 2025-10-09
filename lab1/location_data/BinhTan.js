@@ -2519,15 +2519,3 @@ var binhtan_jsondata = {
     },
   ],
 };
-
-//Nên xếp chồng theo thứ tự polygon->đường->điểm
-binhtan_jsondata.polygons.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-binhtan_jsondata.lines.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-binhtan_jsondata.points.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-map.add(graphicsLayer);

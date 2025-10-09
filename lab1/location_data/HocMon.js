@@ -1278,15 +1278,3 @@ var hocmon_jsondata = {
     },
   ],
 };
-
-//Nên xếp chồng theo thứ tự polygon->đường->điểm
-hocmon_jsondata.polygons.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-hocmon_jsondata.lines.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-hocmon_jsondata.points.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-map.add(graphicsLayer);

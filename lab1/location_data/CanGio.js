@@ -3493,15 +3493,3 @@ var cangio_jsondata = {
     },
   ],
 };
-
-//Nên xếp chồng theo thứ tự polygon->đường->điểm
-cangio_jsondata.polygons.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-cangio_jsondata.lines.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-cangio_jsondata.points.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-map.add(graphicsLayer);

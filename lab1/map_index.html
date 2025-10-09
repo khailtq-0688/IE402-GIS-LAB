@@ -36,7 +36,7 @@
         var view = new MapView({
           container: "viewDiv",
           map: map,
-          center: [106.80196068432218, 10.870525057480787],
+          center: [106.6390786617953, 10.77573260384651],
           zoom: 16,
           highlightOptions: {
             color: "blue",
@@ -71,9 +71,6 @@
         }
 
         var graphicsLayer = new GraphicsLayer();
-        map.add(graphicsLayer);
-
-        // Chỉ dùng q8_jsondata (theo file quan_8.js)
         // polygon
         q8_jsondata.polygons.forEach(function (data) {
           graphicsLayer.add(createGraphic(data));
@@ -277,6 +274,7 @@
         q12_jsondata.points.forEach(function (data) {
           graphicsLayer.add(createGraphic(data));
         });
+        map.add(graphicsLayer);
       });
     </script>
   </head>

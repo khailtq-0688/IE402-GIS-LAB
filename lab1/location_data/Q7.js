@@ -652,15 +652,3 @@ var quan7_jsondata = {
     },
   ],
 };
-
-//Nên xếp chồng theo thứ tự polygon->đường->điểm
-quan7_jsondata.polygons.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-quan7_jsondata.lines.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-quan7_jsondata.points.forEach(function (data) {
-  graphicsLayer.add(createGraphic(data));
-});
-map.add(graphicsLayer);
