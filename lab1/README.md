@@ -21,7 +21,8 @@ lab1/
 ```
 
 ## 2. Hướng dẫn chạy project
-
+- git clone https://github.com/khailtq-0688/IE402-GIS-LAB.git
+- cd IE402-GIS-LAB/lab1/
 - Để chạy project, mở file map_index.html bằng trình duyệt web.
 - Đảm bảo các file và thư mục liên quan đều nằm đúng vị trí như cấu trúc trên.
 
