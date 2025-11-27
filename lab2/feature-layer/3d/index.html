@@ -1,101 +1,289 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8" />
-<meta name="viewport"
-	content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>3D - Building Map</title>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>Smart City - Xếp chồng tòa nhà tự động</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      
+      /* Bảng điều khiển bên phải */
+      #controlDiv {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        max-width: 320px;
+        max-height: 80%;
+        overflow-y: auto;
+        backdrop-filter: blur(5px);
+      }
+      
+      h3 {
+        margin-top: 0;
+        color: #004575;
+        border-bottom: 2px solid #0079c1;
+        padding-bottom: 8px;
+        font-size: 16px;
+      }
 
-<style>
-html, body, #viewDiv {
-	padding: 0;
-	margin: 0;
-	height: 100%;
-	width: 100%;
-}
+      .building-item {
+        background: #f4f4f4;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 4px;
+        border-left: 4px solid #ccc;
+      }
 
-</style>
+      .status-text {
+        font-size: 12px;
+        color: #666;
+        font-style: italic;
+      }
+      
+      .loading {
+        color: #e67e22;
+        font-weight: bold;
+      }
+      .done {
+        color: #27ae60;
+        font-weight: bold;
+      }
+    </style>
+    
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.29/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.29/"></script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <div id="controlDiv">
+      <h3>Quản lý Tòa Nhà</h3>
+      <div id="statusList">Đang khởi tạo bản đồ...</div>
+    </div>
 
-<link rel="stylesheet"
-	href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
-<script src="https://js.arcgis.com/4.29/"></script>
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/GeoJSONLayer",
+        "esri/request"
+      ], function (Map, SceneView, GeoJSONLayer, esriRequest) {
 
-<script>
-        require([
-            "esri/Map",
-            "esri/views/SceneView",
-            "esri/layers/GeoJSONLayer",
-            "esri/layers/SceneLayer", "esri/layers/GraphicsLayer", "esri/Graphic", "esri/request"
-        ], function (Map, SceneView, GeoJSONLayer, SceneLayer,
-                     GraphicsLayer, Graphic, esriRequest) {
-        	var createGraphic = function(data) {
-    			return new Graphic({
-    				geometry : data,
-    				symbol : data.symbol,
-    				attributes : data,
-    				popupTemplate : data.popupTemplate
-    			});
-    		};
-    		
-    		const json_options = {
-    				query : {
-    					f : "json"
-    				},
-    				responseType : "json"
-    			};
-			// request json
-			esriRequest('./data.json', json_options).then(function(response) {
-				var graphicsLayer = new GraphicsLayer();
-				console.log(response);
-				response.data.forEach(function(data){
-					graphicsLayer.add(createGraphic(data));
-				});
-				map.add(graphicsLayer);
+        // =================================================================================
+        // 1. CẤU HÌNH DỮ LIỆU TÒA NHÀ (Bạn chỉnh sửa phần này)
+        // =================================================================================
+        
+        const buildingsConfig = [
+          {
+            id: "landmark_plus",
+            name: "Landmark Plus (Hiện hữu)",
+            color: "#89CFF0", // Màu xanh da trời
+            floors: [
+              // Đường dẫn file (url) và chiều cao (height)
+              { url: "./them_giua.geojson", height: 3.34151 }, 
+              { url: "./them_giua2.geojson", height: 5.95174 }, 
+              { url: "./them_giua3.geojson", height: 7.06727 },
+              { url: "./them_giua4.geojson", height: 0.636902}, 
+              { url: "./them_giua5.geojson", height: 0.375608 },     
+              { url: "./them_giua6.geojson", height: 0.244963 },
+              { url: "./them_giua7.geojson", height: 0.571579 },
+              { url: "./them_giua8.geojson", height: 1.25747 },  
+              { url: "./them_giua9.geojson", height: 0.489927 },
+              { url: "./them_giua10.geojson", height: 0.938538 },
+            ]
+          },
+          
+          // --- Ví dụ thêm tòa nhà thứ 2 (Bỏ comment để dùng) ---
+          {
+            id: "new_tower",
+            name: "Tòa tháp Mới",
+            color: "#89CFF0", // Màu vàng
+            floors: [
+               { url: "./them_duoi.geojson", height: 1.84 },
+               { url: "./them_duoi2.geojson", height: 0.381 },
+               { url: "./them_duoi3.geojson", height: 1.12051 },
+               { url: "./them_duoi4.geojson", height: 2 },
+               { url: "./them_duoi5.geojson", height: 1.95174 },
+               { url: "./them_duoi6.geojson", height: 2 },
+               { url: "./them_duoi7.geojson", height: 1.06727},
+                { url: "./them_duoi8.geojson", height: 5},
+                { url: "./them_duoi9.geojson", height: 1},
+                { url: "./them_duoi10.geojson", height: 1.829052},
+                { url: "./them_duoi8.geojson", height: 1.25747},
+                { url: "./them_duoi9.geojson", height: 0.25747 },
+                { url: "./them_duoi.geojson", height: 1 },
+            ]
+          }
+        ];
 
-			});
-			// geojson layer
-			const geojsonLayer = new GeoJSONLayer({
-				url: "./data.geojson"
-			});
-			
-			geojsonLayer.renderer = {
-				type: "simple",
-				symbol: {
-					type: "polygon-3d",
-					symbolLayers: [
-						{
-							type: "extrude",
-							size: 100,
-							material: {
-								color: "#7eadf7"
-							}
-						}
-					]
-				}
-			};            
-			const map = new Map({
-                basemap: "topo-vector",
-                ground: "world-elevation",
-                layers: [geojsonLayer] //end layers
-            });
+        // =================================================================================
+        // 2. HÀM XỬ LÝ "LÀM SẠCH" DỮ LIỆU (Fix lỗi lơ lửng)
+        // =================================================================================
+        
+        // Hàm này tải file về, xóa tọa độ Z cứng trong file, tạo ra file tạm trong bộ nhớ
+        async function createCleanBlob(url) {
+          try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Không tìm thấy file: ${url}`);
+            
+            const geojson = await response.json();
 
-            const view = new SceneView({
-                container: "viewDiv",
-                map: map,
-                camera: {
-                    position: [106.720264, 10.786162, 300],
-                    heading: 0,
-                    tilt: 75
+            // Duyệt qua tất cả feature để xóa tọa độ Z (phần tử thứ 3 trong mảng tọa độ)
+            geojson.features.forEach(feature => {
+              if (feature.geometry && feature.geometry.coordinates) {
+                const geomType = feature.geometry.type;
+                
+                // Xử lý cho Polygon (Đa giác)
+                if (geomType === "Polygon") {
+                  feature.geometry.coordinates = feature.geometry.coordinates.map(ring => 
+                    ring.map(coord => [coord[0], coord[1]]) // Chỉ lấy X, Y
+                  );
+                } 
+                // Xử lý cho MultiPolygon (Nếu có)
+                else if (geomType === "MultiPolygon") {
+                  feature.geometry.coordinates = feature.geometry.coordinates.map(polygon => 
+                    polygon.map(ring => 
+                      ring.map(coord => [coord[0], coord[1]])
+                    )
+                  );
                 }
+              }
             });
 
-            view.popup.defaultPopupTemplateEnabled = true;
+            // Tạo Blob URL từ dữ liệu đã làm sạch
+            const blob = new Blob([JSON.stringify(geojson)], {type: "application/json"});
+            return URL.createObjectURL(blob);
+
+          } catch (error) {
+            console.error("Lỗi xử lý file:", error);
+            return null;
+          }
+        }
+
+        // =================================================================================
+        // 3. KHỞI TẠO BẢN ĐỒ
+        // =================================================================================
+
+        const map = new Map({
+          basemap: "topo-vector",
+          ground: "world-elevation"
         });
 
-    </script>
-</head>
+        const view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          camera: {
+            position: [106.6953, 10.7750, 200],
+            heading: 0,
+            tilt: 70,
+          },
+          environment: {
+            lighting: { type: "virtual" }
+          }
+        });
 
-<body>
-	<div id="viewDiv"></div>
-</body>
+        const statusList = document.getElementById("statusList");
+        statusList.innerHTML = "";
+
+        // =================================================================================
+        // 4. CHẠY VÒNG LẶP XẾP CHỒNG
+        // =================================================================================
+
+        async function loadBuildings() {
+          
+          for (const building of buildingsConfig) {
+            
+            // UI: Hiển thị trạng thái đang tải
+            const divInfo = document.createElement("div");
+            divInfo.className = "building-item";
+            divInfo.style.borderLeftColor = building.color;
+            divInfo.innerHTML = `
+              <b>${building.name}</b><br>
+              <span class="status-text loading">Đang xử lý ${building.floors.length} tầng...</span>
+            `;
+            statusList.appendChild(divInfo);
+
+            let currentOffset = 0; // Reset độ cao về 0 cho tòa nhà mới
+
+            for (let i = 0; i < building.floors.length; i++) {
+              const floor = building.floors[i];
+              
+              // Bước 1: Làm sạch dữ liệu (Xóa Z trong file)
+              const cleanUrl = await createCleanBlob(floor.url);
+              
+              if (cleanUrl) {
+                // Bước 2: Tạo lớp GeoJSON
+                const layer = new GeoJSONLayer({
+                  url: cleanUrl, // Dùng URL đã làm sạch
+                  title: `${building.name} - Tầng ${i + 1}`,
+                  
+                  // Bước 3: Cấu hình độ cao xếp chồng
+                  elevationInfo: {
+                    mode: "relative-to-ground", 
+                    offset: currentOffset // Nâng lên bằng tổng chiều cao các tầng dưới
+                  },
+                  
+                  // Bước 4: Tạo khối 3D (Extrude)
+                  renderer: {
+                    type: "simple",
+                    symbol: {
+                      type: "polygon-3d",
+                      symbolLayers: [{
+                        type: "extrude",
+                        size: floor.height, // Chiều cao (độ dày) của tầng này
+                        material: { color: building.color },
+                        edges: { type: "solid", color: "#555", size: 0.5 }
+                      }]
+                    }
+                  },
+
+                  popupTemplate: {
+                    title: "{Building name}",
+                    content: `
+                      <table class="esri-widget__table">
+                        <tr><td>Tòa nhà:</td><td>${building.name}</td></tr>
+                        <tr><td>Tầng:</td><td>${i + 1}</td></tr>
+                        <tr><td>Cao độ đáy:</td><td>${currentOffset.toFixed(2)}m</td></tr>
+                        <tr><td>Chiều cao tầng:</td><td>${floor.height}m</td></tr>
+                      </table>
+                    `
+                  }
+                });
+
+                map.add(layer);
+
+                // Bước 5: Cộng dồn độ cao cho tầng tiếp theo
+                currentOffset += floor.height;
+              }
+            }
+            
+            // Cập nhật UI khi xong
+            divInfo.querySelector(".status-text").innerHTML = "✔ Đã tải xong";
+            divInfo.querySelector(".status-text").className = "status-text done";
+          }
+        }
+
+        // Bắt đầu chạy
+        loadBuildings();
+
+      });
+    </script>
+  </body>
 </html>
