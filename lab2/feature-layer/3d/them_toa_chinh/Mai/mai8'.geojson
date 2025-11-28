@@ -1,0 +1,29 @@
+{
+  "type": "FeatureCollection",
+  "generator": "smartcity",
+  "copyright": "Smartcity",
+  "timestamp": "2021-05-27T09:28:58Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Building name": "Landmark Plus",
+        "height": 1.84,
+        "idb": "7"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [106.6955154352618, 10.7771103336909, 30.35301], 
+            [106.6955074390343, 10.7771175837904, 30.35301], 
+            [106.6954366467578, 10.7770395060834, 30.35301],
+            [106.6954446429853, 10.7770322559839, 30.35301],
+            [106.6955154352618, 10.7771103336909, 30.35301]
+          ]
+        ]
+      },
+      "id": "pp7"
+    }
+  ]
+}

@@ -6,7 +6,7 @@
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no"
     />
-    <title>Smart City - Xếp chồng tòa nhà tự động</title>
+    <title>Mô hình 3D Dinh Độc Lập</title>
     <style>
       html,
       body,
@@ -17,7 +17,7 @@
         width: 100%;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
-      
+
       /* Bảng điều khiển bên phải */
       #controlDiv {
         position: absolute;
@@ -26,13 +26,13 @@
         background: rgba(255, 255, 255, 0.95);
         padding: 15px;
         border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         max-width: 320px;
         max-height: 80%;
         overflow-y: auto;
         backdrop-filter: blur(5px);
       }
-      
+
       h3 {
         margin-top: 0;
         color: #004575;
@@ -54,7 +54,7 @@
         color: #666;
         font-style: italic;
       }
-      
+
       .loading {
         color: #e67e22;
         font-weight: bold;
@@ -64,7 +64,7 @@
         font-weight: bold;
       }
     </style>
-    
+
     <link
       rel="stylesheet"
       href="https://js.arcgis.com/4.29/esri/themes/light/main.css"
@@ -83,94 +83,168 @@
         "esri/Map",
         "esri/views/SceneView",
         "esri/layers/GeoJSONLayer",
-        "esri/request"
+        "esri/request",
       ], function (Map, SceneView, GeoJSONLayer, esriRequest) {
+        // Function to create GeoJSONLayer
+        function createGeoJsonLayer(name, renderer) {
+          return new GeoJSONLayer({
+            url: name,
+            renderer: renderer,
+          });
+        }
+
+        function blockRenderer(height, color) {
+          return {
+            type: "simple",
+            symbol: {
+              type: "polygon-3d",
+              symbolLayers: [
+                {
+                  type: "extrude",
+                  size: height,
+                  material: {
+                    color: color,
+                  },
+                },
+              ],
+            },
+          };
+        }
 
         // =================================================================================
         // 1. CẤU HÌNH DỮ LIỆU TÒA NHÀ (Bạn chỉnh sửa phần này)
         // =================================================================================
-        
+
         const buildingsConfig = [
           {
-            id: "landmark_plus",
-            name: "Landmark Plus (Hiện hữu)",
-            color: "#89CFF0", // Màu xanh da trời
+            id: "middle_block",
+            name: "Khối giữa",
+            color: "#E7DFD0FF",
             floors: [
               // Đường dẫn file (url) và chiều cao (height)
-              { url: "./them_giua.geojson", height: 3.34151 }, 
-              { url: "./them_giua2.geojson", height: 5.95174 }, 
+              { url: "./them_giua.geojson", height: 3.34151 },
+              { url: "./them_giua2.geojson", height: 5.95174 },
               { url: "./them_giua3.geojson", height: 7.06727 },
-              { url: "./them_giua4.geojson", height: 0.636902}, 
-              { url: "./them_giua5.geojson", height: 0.375608 },     
+              { url: "./them_giua4.geojson", height: 0.636902 },
+              { url: "./them_giua5.geojson", height: 0.375608 },
               { url: "./them_giua6.geojson", height: 0.244963 },
               { url: "./them_giua7.geojson", height: 0.571579 },
-              { url: "./them_giua8.geojson", height: 1.25747 },  
+              { url: "./them_giua8.geojson", height: 1.25747 },
               { url: "./them_giua9.geojson", height: 0.489927 },
               { url: "./them_giua10.geojson", height: 0.938538 },
-            ]
+            ],
           },
-          
-          // --- Ví dụ thêm tòa nhà thứ 2 (Bỏ comment để dùng) ---
+
           {
-            id: "new_tower",
-            name: "Tòa tháp Mới",
-            color: "#89CFF0", // Màu vàng
+            id: "main_block",
+            name: "Khối chính",
+            color: "#E7DFD0FF",
             floors: [
-               { url: "./them_duoi.geojson", height: 1.84 },
-               { url: "./them_duoi2.geojson", height: 0.381 },
-               { url: "./them_duoi3.geojson", height: 1.12051 },
-               { url: "./them_duoi4.geojson", height: 2 },
-               { url: "./them_duoi5.geojson", height: 1.95174 },
-               { url: "./them_duoi6.geojson", height: 2 },
-               { url: "./them_duoi7.geojson", height: 1.06727},
-                { url: "./them_duoi8.geojson", height: 5},
-                { url: "./them_duoi9.geojson", height: 1},
-                { url: "./them_duoi10.geojson", height: 1.829052},
-                { url: "./them_duoi8.geojson", height: 1.25747},
-                { url: "./them_duoi9.geojson", height: 0.25747 },
-                { url: "./them_duoi.geojson", height: 1 },
-            ]
-          }
+              // Tòa chính:
+              { url: "./them_toa_chinh/them_1.geojson", height: 0.5 },
+
+              { url: "./them_duoi.geojson", height: 1.84 },
+              { url: "./them_duoi2.geojson", height: 0.381 },
+              { url: "./them_duoi3.geojson", height: 1.12051 },
+              { url: "./them_duoi4.geojson", height: 2 },
+              { url: "./them_duoi5.geojson", height: 1.95174 },
+              { url: "./them_duoi6.geojson", height: 2 },
+              { url: "./them_duoi7.geojson", height: 1.06727 },
+              { url: "./them_duoi8.geojson", height: 5 },
+              { url: "./them_duoi9.geojson", height: 1 },
+              { url: "./them_duoi10.geojson", height: 1.829052 },
+              { url: "./them_duoi8.geojson", height: 1.25747 },
+              { url: "./them_duoi9.geojson", height: 0.25747 },
+              { url: "./them_duoi.geojson", height: 1 },
+            ],
+          },
+          {
+            id: "main_building",
+            name: "Tòa chính",
+            color: "#E7DFD0FF", // Màu vàng
+            floors: [
+              // Tòa chính:
+              { url: "./them_toa_chinh/them_1.geojson", height: 1.84 },
+              { url: "./them_toa_chinh/them2.geojson", height: 0.330723 },
+              { url: "./them_toa_chinh/them3.geojson", height: 1.18929 },
+              { url: "./them_toa_chinh/them4.geojson", height: 0.481984 },
+              { url: "./them_toa_chinh/them5.geojson", height: 2.05081 },
+              { url: "./them_toa_chinh/them6.geojson", height: 0.774954 },
+              { url: "./them_toa_chinh/them7.geojson", height: 0.519786 },
+              { url: "./them_toa_chinh/them8.geojson", height: 12.6923 },
+              { url: "./them_toa_chinh/them9.geojson", height: 0.792493 },
+            ],
+          },
         ];
+
+        function GLBRenderer({ href, heading, pitch = 0, roll = 0 }) {
+          return {
+            type: "simple",
+            symbol: {
+              type: "point-3d",
+              symbolLayers: [
+                {
+                  type: "object",
+                  resource: {
+                    href,
+                  },
+                  heading,
+                  pitch,
+                  roll,
+                },
+              ],
+            },
+          };
+        }
+
+        function createGeoJsonLayer(url, renderer) {
+          return new GeoJSONLayer({
+            url: url,
+            renderer: renderer,
+          });
+        }
 
         // =================================================================================
         // 2. HÀM XỬ LÝ "LÀM SẠCH" DỮ LIỆU (Fix lỗi lơ lửng)
         // =================================================================================
-        
+
         // Hàm này tải file về, xóa tọa độ Z cứng trong file, tạo ra file tạm trong bộ nhớ
         async function createCleanBlob(url) {
           try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Không tìm thấy file: ${url}`);
-            
+
             const geojson = await response.json();
 
             // Duyệt qua tất cả feature để xóa tọa độ Z (phần tử thứ 3 trong mảng tọa độ)
-            geojson.features.forEach(feature => {
+            geojson.features.forEach((feature) => {
               if (feature.geometry && feature.geometry.coordinates) {
                 const geomType = feature.geometry.type;
-                
+
                 // Xử lý cho Polygon (Đa giác)
                 if (geomType === "Polygon") {
-                  feature.geometry.coordinates = feature.geometry.coordinates.map(ring => 
-                    ring.map(coord => [coord[0], coord[1]]) // Chỉ lấy X, Y
-                  );
-                } 
+                  feature.geometry.coordinates =
+                    feature.geometry.coordinates.map(
+                      (ring) => ring.map((coord) => [coord[0], coord[1]]) // Chỉ lấy X, Y
+                    );
+                }
                 // Xử lý cho MultiPolygon (Nếu có)
                 else if (geomType === "MultiPolygon") {
-                  feature.geometry.coordinates = feature.geometry.coordinates.map(polygon => 
-                    polygon.map(ring => 
-                      ring.map(coord => [coord[0], coord[1]])
-                    )
-                  );
+                  feature.geometry.coordinates =
+                    feature.geometry.coordinates.map((polygon) =>
+                      polygon.map((ring) =>
+                        ring.map((coord) => [coord[0], coord[1]])
+                      )
+                    );
                 }
               }
             });
 
             // Tạo Blob URL từ dữ liệu đã làm sạch
-            const blob = new Blob([JSON.stringify(geojson)], {type: "application/json"});
+            const blob = new Blob([JSON.stringify(geojson)], {
+              type: "application/json",
+            });
             return URL.createObjectURL(blob);
-
           } catch (error) {
             console.error("Lỗi xử lý file:", error);
             return null;
@@ -183,20 +257,20 @@
 
         const map = new Map({
           basemap: "topo-vector",
-          ground: "world-elevation"
+          ground: "world-elevation",
         });
 
         const view = new SceneView({
           container: "viewDiv",
           map: map,
           camera: {
-            position: [106.6953, 10.7750, 200],
-            heading: 0,
+            position: [106.6966548332337, 10.781143317791, 200],
+            heading: 200,
             tilt: 70,
           },
           environment: {
-            lighting: { type: "virtual" }
-          }
+            lighting: { type: "virtual" },
+          },
         });
 
         const statusList = document.getElementById("statusList");
@@ -207,9 +281,7 @@
         // =================================================================================
 
         async function loadBuildings() {
-          
           for (const building of buildingsConfig) {
-            
             // UI: Hiển thị trạng thái đang tải
             const divInfo = document.createElement("div");
             divInfo.className = "building-item";
@@ -224,65 +296,459 @@
 
             for (let i = 0; i < building.floors.length; i++) {
               const floor = building.floors[i];
-              
-              // Bước 1: Làm sạch dữ liệu (Xóa Z trong file)
-              const cleanUrl = await createCleanBlob(floor.url);
-              
-              if (cleanUrl) {
-                // Bước 2: Tạo lớp GeoJSON
-                const layer = new GeoJSONLayer({
-                  url: cleanUrl, // Dùng URL đã làm sạch
-                  title: `${building.name} - Tầng ${i + 1}`,
-                  
-                  // Bước 3: Cấu hình độ cao xếp chồng
-                  elevationInfo: {
-                    mode: "relative-to-ground", 
-                    offset: currentOffset // Nâng lên bằng tổng chiều cao các tầng dưới
-                  },
-                  
-                  // Bước 4: Tạo khối 3D (Extrude)
-                  renderer: {
-                    type: "simple",
-                    symbol: {
-                      type: "polygon-3d",
-                      symbolLayers: [{
-                        type: "extrude",
-                        size: floor.height, // Chiều cao (độ dày) của tầng này
-                        material: { color: building.color },
-                        edges: { type: "solid", color: "#555", size: 0.5 }
-                      }]
-                    }
-                  },
+              let layerUrl;
+              let rendererConfig;
+              let elevationConfig;
 
+              // TRƯỜNG HỢP 1: NẾU LÀ MÁI NHÀ (Giữ nguyên Z, không Extrude)
+              if (floor.isRoof) {
+                // Không dùng createCleanBlob để giữ nguyên Z trong file
+                const response = await fetch(floor.url);
+                const blob = await response.blob();
+                layerUrl = URL.createObjectURL(blob);
+
+                // Cấu hình hiển thị theo tọa độ Z thật
+                rendererConfig = {
+                  type: "simple",
+                  symbol: {
+                    type: "polygon-3d",
+                    symbolLayers: [
+                      {
+                        type: "fill", // Dùng Fill (tô mặt) thay vì Extrude (kéo khối)
+                        material: { color: building.color },
+                      },
+                    ],
+                  },
+                };
+
+                // Độ cao: Relative (so với mặt đất + độ cao các tầng dưới)
+                elevationConfig = {
+                  mode: "relative-to-ground",
+                  offset: currentOffset,
+                };
+              }
+
+              // TRƯỜNG HỢP 2: TẦNG BÌNH THƯỜNG (Xóa Z, dùng Extrude)
+              else {
+                layerUrl = await createCleanBlob(floor.url);
+
+                rendererConfig = {
+                  type: "simple",
+                  symbol: {
+                    type: "polygon-3d",
+                    symbolLayers: [
+                      {
+                        type: "extrude", // Kéo khối
+                        size: floor.height,
+                        material: { color: building.color },
+                        edges: { type: "solid", color: "#E7DFD0FF", size: 0.5 },
+                      },
+                    ],
+                  },
+                };
+
+                elevationConfig = {
+                  mode: "relative-to-ground",
+                  offset: currentOffset,
+                };
+              }
+
+              // Tạo Layer chung
+              if (layerUrl) {
+                const layer = new GeoJSONLayer({
+                  url: layerUrl,
+                  title: `${building.name} - Tầng ${i + 1}`,
+                  elevationInfo: elevationConfig,
+                  renderer: rendererConfig,
                   popupTemplate: {
-                    title: "{Building name}",
-                    content: `
-                      <table class="esri-widget__table">
-                        <tr><td>Tòa nhà:</td><td>${building.name}</td></tr>
-                        <tr><td>Tầng:</td><td>${i + 1}</td></tr>
-                        <tr><td>Cao độ đáy:</td><td>${currentOffset.toFixed(2)}m</td></tr>
-                        <tr><td>Chiều cao tầng:</td><td>${floor.height}m</td></tr>
-                      </table>
-                    `
-                  }
+                    title: "{name}",
+                    content: `Mái nhà/Tầng: ${i + 1}`,
+                  },
                 });
 
                 map.add(layer);
 
-                // Bước 5: Cộng dồn độ cao cho tầng tiếp theo
-                currentOffset += floor.height;
+                // Cộng dồn độ cao (Nếu là mái thì không cộng thêm height vì nó tính theo Z rồi)
+                if (!floor.isRoof) {
+                  currentOffset += floor.height;
+                }
               }
             }
-            
+
             // Cập nhật UI khi xong
             divInfo.querySelector(".status-text").innerHTML = "✔ Đã tải xong";
-            divInfo.querySelector(".status-text").className = "status-text done";
+            divInfo.querySelector(".status-text").className =
+              "status-text done";
           }
         }
 
-        // Bắt đầu chạy
-        loadBuildings();
+        // 106.695533677638, 10.7772345264159, 14.74
+        // // OPTION 2: Thêm lớp GeoJSON (NGHIÊNG) (Custem không xếp tầng)
+        // map.add(
+        //   createGeoJsonLayer("./test.geojson", blockRenderer(0.1, "#E7DFD0FF"))
+        // );
+        // MESH:
+        // N: flag
+        map.add(
+          createGeoJsonLayer(
+            "./mesh_xy/mat_truoc_Dinh.geojson",
+            GLBRenderer({
+              href: "../../mesh/MatTruocDinh.glb",
+              heading: 222.5,
+            })
+          )
+        );
 
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_trai1.geojson",
+            blockRenderer(1, "#E7DFD0FF")
+          )
+        ); //J K M L
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_trai2.geojson",
+            blockRenderer(1, "#E7DFD0FF")
+          )
+        ); // M L N O
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_trai3.geojson",
+            blockRenderer(1, "#E7DFD0FF")
+          )
+        ); // N O Q P
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_trai4.geojson",
+            blockRenderer(1, "#E7DFD0FF")
+          )
+        ); // P Q S R
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_phai1.geojson",
+            blockRenderer(1, "#E7DFD0FF")
+          )
+        ); // U J,1 V W
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_phai2.geojson",
+            blockRenderer(1, "#E7DFD0FF")
+          )
+        ); // V W H2 Z
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_phai3.geojson",
+            blockRenderer(1, "#E7DFD0FF")
+          )
+        ); // H2 Z O1 Q1
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_phai4.geojson",
+            blockRenderer(1, "#E7DFD0FF")
+          )
+        ); // O1 Q1 T1 S1
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_trai_duoi1.geojson",
+            blockRenderer(2.87935, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_trai_duoi2.geojson",
+            blockRenderer(2.87935, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_trai_duoi3.geojson",
+            blockRenderer(2.87935, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_trai_duoi4.geojson",
+            blockRenderer(2.87935, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_phai_duoi1.geojson",
+            blockRenderer(2.87935, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_phai_duoi2.geojson",
+            blockRenderer(2.87935, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_phai_duoi3.geojson",
+            blockRenderer(2.87935, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./lan_can_phai_duoi4.geojson",
+            blockRenderer(2.87935, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang1.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang2.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang3.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang4.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang5.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang6.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang7.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang8.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang9.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang10.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang11.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang12.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang13.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang14.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang15.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang16.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang17.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./bac_thang18.geojson",
+            blockRenderer(0.2, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./cauthangtrai.geojson",
+            blockRenderer(3.6, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./cauthanggiua.geojson",
+            blockRenderer(3.6, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./cauthangphai.geojson",
+            blockRenderer(3.6, "#808080")
+          )
+        );
+        map.add(
+          createGeoJsonLayer(
+            "./them_toa_chinh/Mai/mai1.geojson",
+            blockRenderer(4.26903, "#E7DFD0FF")
+          )
+        ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai2.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai3.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai4.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai5.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai6.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai7.geojson",
+              blockRenderer(0.510342, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai8.geojson",
+              blockRenderer(4.705, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai9.geojson",
+              blockRenderer(4.705, "#000")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai10.geojson",
+              blockRenderer(4.705, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai11.geojson",
+              blockRenderer(4.705, "#000")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai12.geojson",
+              blockRenderer(1.17, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai1'.geojson",
+              blockRenderer(4.26903, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai3'.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai4'.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai5'.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai6'.geojson",
+              blockRenderer(1.48067, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai7'.geojson",
+              blockRenderer(0.510342, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai8'.geojson",
+              blockRenderer(4.705, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai9'.geojson",
+              blockRenderer(4.705, "#000")
+            )
+          ), //O K' D1 S
+          map.add(
+            createGeoJsonLayer(
+              "./them_toa_chinh/Mai/mai10'.geojson",
+              blockRenderer(4.705, "#E7DFD0FF")
+            )
+          ), //O K' D1 S
+          // Bắt đầu chạy
+          loadBuildings();
       });
     </script>
   </body>
